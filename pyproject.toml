@@ -3,7 +3,7 @@ name = "Rhythmer"
 version = "1.4.2"
 description = "Rhythmer is a TUI audio downloader based on yt-dlp"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.10"
 dependencies = [
     "yt-dlp",
     "textual",
