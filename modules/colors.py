@@ -1,3 +1,8 @@
+"""
+ANSI color codes for terminal output formatting.
+Usage: from modules.colors import RED, GREEN, RESET
+"""
+
 RESET = "\033[01;0m"
 
 BOLD = "\033[01;1m"
@@ -9,4 +14,5 @@ YELLOW = "\033[01;33m"
 BLUE = "\033[01;34m"
 MAGENTA = "\033[01;35m"
 CYAN = "\033[01;36m"
+WHITE = "\033[37m"
 GRAY = "\033[01;90m"

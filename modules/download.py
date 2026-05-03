@@ -102,20 +102,22 @@ class Download:
         self._last_progress = 0
 
         opts = {
-            "format": "bestaudio/best",
-            "outtmpl": str(Path(self._download_path) / "%(title)s.%(ext)s"),
             "quiet": True,
             "no_warnings": True,
             "nooverwrites": True,
-            "writethumbnail": True,
-            "progress_hooks": [self._progress_hook],
             "noprogress": False,
+            "progress_hooks": [self._progress_hook],
+            "format": "bestaudio/best",
+            "outtmpl": str(Path(self._download_path) / "%(title)s.%(ext)s"),
+            "embedmetadata": True,
+            "writethumbnail": True,
             "postprocessors": [
                 {
                     "key": "FFmpegExtractAudio",
                     "preferredcodec": self.codec,
                     "preferredquality": str(self.kbps),
                 },
+                {"key": "FFmpegMetadata"},
                 {"key": "EmbedThumbnail"},
             ],
         }
