@@ -1,13 +1,11 @@
-from json import JSONDecodeError, dump, load
 from pathlib import Path
 
 from modules.colors import BLUE, BOLD, GREEN, RED, RESET, YELLOW
+from modules.configer import get_config, set_config
 
 
 def add_path():
     """Configure or display the download directory path"""
-    config_file = Path(__file__).parent / "config.json"
-
     try:
         user_input = input(f"{BOLD}\tEnter your path: {RESET}").strip()
 
@@ -15,46 +13,50 @@ def add_path():
         if user_input:
             input_path = Path(user_input).expanduser().resolve()
 
-            # Save path to config file
-            config = {"path": str(input_path)}
-            with open(config_file, "w", encoding="utf-8") as f:
-                dump(config, f, ensure_ascii=False, indent=4)
+            if not input_path.exists():
+                try:
+                    input_path.mkdir(parents=True, exist_ok=True)
+                except Exception as e:
+                    return f"{RED}Error creating directory: {e}{RESET}"
 
-            return (
-                f"{GREEN}Configuration saved successfully!{RESET}"
-                f"{YELLOW}    Path: {RESET}{input_path}"
-                f"{BLUE}    Config file: {RESET}{config_file}"
-            )
+            # Save path to config file
+            if set_config("path", str(input_path)):
+                config_file = Path(__file__).parent / "config.json"
+                return "\n".join(
+                    [
+                        f"{GREEN}Configuration saved successfully!{RESET}",
+                        f"{YELLOW}    Path: {RESET}{input_path}",
+                        f"{BLUE}    Config file: {RESET}{config_file}",
+                    ]
+                )
+            else:
+                return f"{RED}Failed to save configuration!{RESET}"
 
         # Getter mode - no input provided, show current config
         else:
-            if config_file.exists():
-                with open(config_file, "r", encoding="utf-8") as f:
-                    try:
-                        data = load(f)
-                        saved_path_str = data.get("path")
+            saved_path_str = get_config("path")
 
-                        if saved_path_str:
-                            saved_path = Path(saved_path_str)
+            if saved_path_str:
+                saved_path = Path(saved_path_str)
 
-                            # Verify the saved path still exists
-                            if saved_path.exists():
-                                return (
-                                    f"{GREEN}Current download directory: {RESET}{saved_path}"
-                                    f"{GREEN}Configuration file: {RESET}{config_file}"
-                                )
-                            else:
-                                return (
-                                    f"{RED}\nConfig file exists but the saved path is invalid!{RESET}"
-                                    f"{RED}Path: {RESET}{saved_path}"
-                                )
-                        else:
-                            return f"{RED}\nConfig file exists but 'path' key is missing!{RESET}"
-
-                    except JSONDecodeError:
-                        return f"{RED}\nConfig file is corrupted! Please reconfigure.{RESET}"
+                # Verify the saved path still exists
+                if saved_path.exists():
+                    config_file = Path(__file__).parent / "config.json"
+                    return "\n".join(
+                        [
+                            f"{GREEN}Current download directory: {RESET}{saved_path}",
+                            f"{GREEN}Configuration file: {RESET}{config_file}",
+                        ]
+                    )
+                else:
+                    return "\n".join(
+                        [
+                            f"{RED}Config file exists but the saved path is invalid!{RESET}",
+                            f"{RED}Path: {RESET}{saved_path}",
+                        ]
+                    )
             else:
-                return f"{RED}\nConfig file not found! Please set a download path first.{RESET}"
+                return f"{RED}Config file not found! Please set a download path first.{RESET}"
 
     except KeyboardInterrupt:
         # Handle Ctrl+C gracefully
@@ -65,4 +67,4 @@ def add_path():
 
 
 if __name__ == "__main__":
-    add_path()
+    print(add_path())

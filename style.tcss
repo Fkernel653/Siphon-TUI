@@ -1,15 +1,17 @@
 #main_container {
-        layout: vertical;
-        align: center middle;
-        padding: 1;
-    }
-    
-#url_input {
     layout: vertical;
-    align: center top;
+    align: center middle;
+    padding: 2 6;
+    height: 100%;
+    content-align: center middle;
+}
+
+#url_input {
     width: 80;
-    margin-top: 10;
+    margin-top: 2;
     margin-bottom: 1;
+    padding: 0 2;
+    height: 3;
 }
 
 .select_row {
@@ -18,62 +20,95 @@
     width: 80;
     margin-top: 1;
     margin-bottom: 1;
-}
-
-Select {
-    height: 3;
+    height: auto;
 }
 
 #codec_select {
-    width: 40;
+    width: 1fr;
     margin-right: 1;
 }
 
 #kbps_select {
-    width: 40;
+    width: 1fr;
+    margin-left: 0;
+}
+
+.switch_row {
+    layout: vertical;
+    align: center middle;
+    width: 15;
+    margin-top: 0;
+    height: auto;
+}
+
+#label_switch {
+    margin-left: 1;
+    margin-bottom: 1;
+    text-style: bold;
+    color: $text;
+    text-align: center;
+}
+
+#save_switcher {
+    margin-left: 0;
 }
 
 .button_row {
     layout: horizontal;
     align: center top;
     width: 80;
-    margin-top: 1;
-    margin-bottom: 10;
+    margin-top: 2;
+    margin-bottom: 2;
 }
 
 Button {
     height: 3;
+    min-width: 24;
+    border: none;
+    text-style: bold;
 }
 
 #accept_button {
-    width: 20;
     margin-right: 3;
+    background: $success;
+    color: $text;
+}
+
+#accept_button:hover {
+    background: $success-lighten-1;
 }
 
 #accept_button:disabled {
-    opacity: 0.5;
-    border: none;
+    opacity: 0.4;
+    background: $surface-lighten-1;
+    color: $text-muted;
 }
 
 #cancel_button {
-    width: 20;
+    background: $error;
+    color: $text;
+}
+
+#cancel_button:hover {
+    background: $error-lighten-1;
 }
 
 #cancel_button:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
+    background: $surface-lighten-1;
+    color: $text-muted;
 }
 
 #download_progress {
-    width: 80;
+    width: 70;
+    height: 1;
     margin: 1 0;
     opacity: 0;
     transition: opacity 0.3s;
 }
 
-#status_label {
-    width: 80;
-    height: 1;
-    text-align: center;
-    opacity: 0.7;
+#download_progress .percentage {
+    text-style: bold;
+    color: $text;
     margin-top: 1;
 }

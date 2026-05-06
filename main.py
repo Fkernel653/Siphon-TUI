@@ -3,9 +3,18 @@ from threading import Thread
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal, Vertical
-from textual.widgets import Button, Footer, Header, Input, ProgressBar, Select
+from textual.widgets import (
+    Button,
+    Footer,
+    Header,
+    Input,
+    Label,
+    ProgressBar,
+    Select,
+    Switch,
+)
 
-from modules.download import Download, DownloadCancelledError, DownloadError
+from modules.configer import get_config, set_config
 
 LINES_CODEC = ["M4A", "MP3", "FLAC", "Opus"]
 LINES_KBPS = ["320", "256", "128", "64"]
@@ -17,11 +26,12 @@ class Rhythmer(App):
     def __init__(self):
         super().__init__()
         self.theme = "tokyo-night"
-        self.codec = "opus"
-        self.kbps = 256
+        self.codec = None
+        self.kbps = None
         self.download_thread = None
         self.downloading = False
         self.cancelled = False
+        self.autosave = True
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -34,13 +44,14 @@ class Rhythmer(App):
                     ((codec, codec.lower()) for codec in LINES_CODEC),
                     id="codec_select",
                     prompt="Choose a codec",
-                    value="opus",
                 )
+                with Horizontal(classes="switch_row"):
+                    yield Label("Autosave", id="label_switch")
+                    yield Switch(id="save_switcher", value=True)
                 yield Select(
                     ((kbps, kbps) for kbps in LINES_KBPS),
                     id="kbps_select",
-                    prompt="Select the number of kbps",
-                    value="256",
+                    prompt="Select a kbps",
                 )
 
             with Horizontal(classes="button_row"):
@@ -55,10 +66,71 @@ class Rhythmer(App):
 
     @on(Select.Changed)
     def select_changed(self, event: Select.Changed) -> None:
+        if event.value is Select.BLANK or event.value is Select.NULL:
+            return
+
         if event.select.id == "codec_select":
             self.codec = str(event.value).lower()
         elif event.select.id == "kbps_select":
             self.kbps = int(event.value)
+
+    @on(Switch.Changed)
+    def switch_changed(self, event: Switch.Changed) -> None:
+        if event.switch.id == "save_switcher":
+            self.autosave = event.value
+            if self.autosave:
+                if self.codec:
+                    set_config("codec", self.codec)
+                if self.kbps:
+                    set_config("kbps", str(self.kbps))
+                self.notify("🔄 Autosave enabled", severity="information")
+            else:
+                self.notify("⚠️ Autosave disabled", severity="warning")
+
+    @on(Button.Pressed, "#accept_button")
+    def action_download(self) -> None:
+        url_input = self.query_one("#url_input", Input)
+        url = url_input.value.strip()
+
+        if not url:
+            self.notify("❌ Please enter a URL", severity="warning")
+            return
+
+        if not url.startswith(("http://", "https://")):
+            self.notify("❌ Invalid URL", severity="error")
+            return
+
+        if not self._validate_settings():
+            return
+
+        if self.autosave:
+            set_config("codec", self.codec)
+            set_config("kbps", str(self.kbps))
+
+        self.cancelled = False
+        self.downloading = True
+        self.query_one("#accept_button", Button).disabled = True
+        self.query_one("#cancel_button", Button).disabled = False
+        url_input.disabled = True
+
+        progress = self.query_one("#download_progress", ProgressBar)
+        progress.update(total=100, progress=0)
+        progress.styles.opacity = 1
+
+        self.notify(f"Downloading {self.codec.upper()} @ {self.kbps}kbps...")
+
+        self.download_thread = Thread(
+            target=self._start_download, args=(url,), daemon=True
+        )
+        self.download_thread.start()
+
+    @on(Button.Pressed, "#cancel_button")
+    def action_cancel(self) -> None:
+        if self.downloading:
+            self.cancelled = True
+            self.notify("Cancelling...", severity="warning")
+        else:
+            self._download_complete(True, "Nothing to cancel")
 
     def update_progress(self, value: int) -> None:
         if not self.cancelled:
@@ -75,6 +147,8 @@ class Rhythmer(App):
         return self.cancelled
 
     def _start_download(self, url: str) -> None:
+        from modules.download import Download, DownloadCancelledError, DownloadError
+
         try:
             downloader = Download(url=url, codec=self.codec, kbps=self.kbps)
             downloader.set_progress_callback(self.update_progress)
@@ -126,47 +200,41 @@ class Rhythmer(App):
         except Exception:
             pass
 
-    @on(Button.Pressed, "#accept_button")
-    def action_download(self) -> None:
-        url_input = self.query_one("#url_input", Input)
-        url = url_input.value.strip()
+    def _validate_settings(self) -> bool:
+        if self.codec is None:
+            saved_codec = get_config("codec")
+            if saved_codec:
+                self.codec = saved_codec
 
-        if not url:
-            self.notify("Please enter a URL", severity="warning")
-            return
+        if self.kbps is None:
+            saved_kbps = get_config("kbps")
+            if saved_kbps:
+                self.kbps = int(saved_kbps)
 
-        if not url.startswith(("http://", "https://")):
-            self.notify("Invalid URL", severity="error")
-            return
-
-        self.cancelled = False
-        self.downloading = True
-        self.query_one("#accept_button", Button).disabled = True
-        self.query_one("#cancel_button", Button).disabled = False
-        url_input.disabled = True
-
-        progress = self.query_one("#download_progress", ProgressBar)
-        progress.update(total=100, progress=0)
-        progress.styles.opacity = 1
-
-        self.notify(f"Downloading {self.codec.upper()} @ {self.kbps}kbps...")
-
-        self.download_thread = Thread(
-            target=self._start_download, args=(url,), daemon=True
-        )
-        self.download_thread.start()
-
-    @on(Button.Pressed, "#cancel_button")
-    def action_cancel(self) -> None:
-        if self.downloading:
-            self.cancelled = True
-            self.notify("Cancelling...", severity="warning")
-        else:
-            self._download_complete(True, "Nothing to cancel")
+        if not self.codec and not self.kbps:
+            self.notify(
+                "❌ Please select a codec format and bitrate (kbps)", severity="warning"
+            )
+            return False
+        elif not self.codec:
+            self.notify("❌ Please select a codec format", severity="warning")
+            return False
+        elif not self.kbps:
+            self.notify("❌ Please select a bitrate (kbps)", severity="warning")
+            return False
+        return True
 
     def on_unmount(self) -> None:
         self.cancelled = True
 
 
 if __name__ == "__main__":
-    Rhythmer().run()
+    try:
+        Rhythmer().run()
+    except KeyboardInterrupt:
+        import sys
+
+        from modules.colors import GREEN, RESET
+
+        print(f"\n{GREEN}Goodbye!{RESET}")
+        sys.exit(0)
