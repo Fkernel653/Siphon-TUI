@@ -154,7 +154,9 @@ class Rhythmer(App):
             self.call_from_thread(
                 self._download_complete,
                 success,
-                "Download completed!" if success else "Download failed",
+                f"Download completed on {self.download_path}"
+                if success
+                else "Download failed",
             )
         except DownloadCancelledError:
             self.call_from_thread(self._download_complete, False, "Download cancelled")

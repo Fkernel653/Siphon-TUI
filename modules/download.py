@@ -3,10 +3,10 @@ Async YouTube downloader with progress tracking for Rhythmer.
 """
 
 import asyncio
+import shutil
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from shutil import which
 from typing import Callable, Optional
 
 from yt_dlp import YoutubeDL
@@ -50,7 +50,7 @@ class Download:
         self._executor = ThreadPoolExecutor(max_workers=max_concurrent)
         self.is_audio = self.codec in AUDIO_CODECS
 
-        if which("ffmpeg") is None:
+        if shutil.which("ffmpeg") is None:
             raise DownloadError(
                 "FFmpeg not found in PATH! Please install FFmpeg first."
             )
