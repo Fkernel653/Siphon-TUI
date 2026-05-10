@@ -27,12 +27,12 @@ SELECT_IDS = {
 }
 
 
-class Rhythmer(App):
+class Siphon(App):
     CSS_PATH = "style.tcss"
 
     def __init__(self):
         super().__init__()
-        self.theme = "tokyo-night"
+        self.theme = "rose-pine"
         self.codec = None
         self.container = None
         self.kbps = 256
@@ -206,7 +206,7 @@ class Rhythmer(App):
 
 if __name__ == "__main__":
     try:
-        Rhythmer().run()
+        Siphon().run()
     except KeyboardInterrupt:
         import sys
 

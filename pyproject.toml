@@ -1,7 +1,7 @@
 [project]
-name = "Rhythmer"
-version = "1.5.2"
-description = "Rhythmer is a TUI audio downloader based on yt-dlp"
+name = "Siphon"
+version = "1.5.3"
+description = "Siphon is a TUI audio/video downloader based on yt-dlp"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [

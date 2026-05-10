@@ -1,4 +1,4 @@
-# Rhythmer is a TUI audio/video downloader based on yt-dlp
+# Siphon is a TUI audio/video downloader based on yt-dlp
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -29,7 +29,7 @@ A modern terminal-based media downloader with interactive UI, built with Python 
 #### 1. Clone Repository
 
 ```bash
-git clone https://github.com/Fkernel653/Rhythmer.git && cd Rhythmer
+git clone https://github.com/Fkernel653/Siphon.git && cd Siphon
 ```
 
 #### 2. Install Dependencies
@@ -77,7 +77,7 @@ If you skip `add_path.py`, files will be saved to your home directory (`~` or `$
 ## 📁 Structure
 
 ```
-Rhythmer/
+Siphon/
 ├── main.py             # TUI entry point and UI logic
 ├── add_path.py         # Path configuration tool (optional)
 ├── style.tcss          # Layout and spacing styles
@@ -128,4 +128,4 @@ MIT License — see [LICENSE](LICENSE).
 ---
 
 **Author:** [Fkernel653](https://github.com/Fkernel653)  
-**Repository:** [github.com/Fkernel653/Rhythmer](https://github.com/Fkernel653/Rhythmer)
+**Repository:** [github.com/Fkernel653/Siphon](https://github.com/Fkernel653/Siphon)
