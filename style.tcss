@@ -11,19 +11,6 @@
     height: 3;
 }
 
-#download_progress {
-    width: 80;
-    height: 1;
-    margin-left: 25;
-    margin-bottom: 1;
-    opacity: 0;
-}
-
-#download_progress .percentage {
-    text-style: bold;
-    color: $text;
-}
-
 #select_section {
     width: 100;
 }
