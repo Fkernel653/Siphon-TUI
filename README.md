@@ -28,7 +28,7 @@ A modern terminal-based audio downloader with interactive UI, built with Python 
 #### 1. Clone Repository
 
 ```bash
-git clone -b py https://github.com/Fkernel653/Rhythmer.git && cd Rhythmer
+git clone https://github.com/Fkernel653/Rhythmer.git && cd Rhythmer
 ```
 
 #### 2. Install Dependencies
