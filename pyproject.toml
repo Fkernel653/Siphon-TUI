@@ -1,6 +1,6 @@
 [project]
 name = "Siphon"
-version = "1.5.3"
+version = "1.6.0"
 description = "Siphon is a TUI audio/video downloader based on yt-dlp"
 readme = "README.md"
 requires-python = ">=3.10"
