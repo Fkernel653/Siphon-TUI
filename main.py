@@ -12,12 +12,12 @@ VIDEO_CONTAINERS = ["MP4", "MKV", "WebM", "MOV", "AVI", "FLV"]
 LINES_KBPS = ["320", "256", "128", "64"]
 
 VIDEO_CONTAINER_AUDIO_MAP = {
-    "mp4": "m4a",  # H.264 + AAC
-    "mov": "m4a",  # H.264 + AAC
-    "mkv": "opus",  # VP9 + Opus
-    "webm": "opus",  # VP9 + Opus
-    "avi": "mp3",  # AVI
-    "flv": "aac",  # FLV
+    "mp4": "m4a",
+    "mov": "m4a",
+    "mkv": "opus",
+    "webm": "opus",
+    "avi": "mp3",
+    "flv": "aac",
 }
 
 SELECT_IDS = {
@@ -37,7 +37,6 @@ class Siphon(App):
         self.container = None
         self.kbps = 256
         self.download_path = get_path()
-        self.download_thread = None
         self.downloading = False
         self.cancelled = False
 
@@ -150,13 +149,11 @@ class Siphon(App):
                 download_path=self.download_path,
             )
             downloader.set_cancel_check(lambda: self.cancelled)
-            success = downloader.download()
+            downloader.download()
             self.call_from_thread(
                 self._download_complete,
-                success,
-                f"Download completed on {self.download_path}"
-                if success
-                else "Download failed",
+                True,
+                f"Download completed on {self.download_path}",
             )
         except DownloadCancelledError:
             self.call_from_thread(self._download_complete, False, "Download cancelled")
@@ -167,7 +164,6 @@ class Siphon(App):
 
     def _download_complete(self, success: bool, message: str) -> None:
         self.downloading = False
-        self.download_thread = None
         self.cancelled = False
         self._reset_ui()
         self.notify(

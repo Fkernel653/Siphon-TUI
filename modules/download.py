@@ -1,24 +1,21 @@
 """
-Async YouTube downloader with progress tracking for Rhythmer.
+Sync YouTube downloader with cancellation support for Rhythmer TUI.
 """
 
-import asyncio
 import shutil
-import threading
-from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Optional
 
-from yt_dlp import YoutubeDL
+AUDIO_CODECS = frozenset({"mp3", "aac", "flac", "m4a", "opus", "vorbis", "wav"})
 
-AUDIO_CODECS = {"mp3", "aac", "flac", "m4a", "opus", "vorbis", "wav"}
 VIDEO_CONTAINER_AUDIO_MAP = {
-    "mp4": "m4a",  # H.264 + AAC
-    "mov": "m4a",  # H.264 + AAC
-    "mkv": "opus",  # VP9 + Opus
-    "webm": "opus",  # VP9 + Opus
-    "avi": "mp3",  # AVI
-    "flv": "aac",  # FLV
+    "mp4": "m4a",
+    "mov": "m4a",
+    "mkv": "opus",
+    "webm": "opus",
+    "avi": "mp3",
+    "flv": "aac",
 }
 
 
@@ -30,24 +27,22 @@ class DownloadCancelledError(DownloadError):
     pass
 
 
+@dataclass
 class Download:
-    def __init__(
-        self,
-        url: str,
-        codec: str,
-        kbps: int,
-        download_path: str,
-        max_concurrent: int = 3,
-    ):
-        self.url = url
-        self.codec = codec.lower()
-        self.kbps = kbps
-        self.download_path = download_path
-        self.max_concurrent = max_concurrent
-        self._cancel_callback: Optional[Callable[[], bool]] = None
-        self._cancelled = False
-        self._lock = threading.Lock()
-        self._executor = ThreadPoolExecutor(max_workers=max_concurrent)
+    """Synchronous audio/video downloader using yt-dlp with cancellation support."""
+
+    url: str
+    codec: str
+    kbps: int
+    download_path: str
+    max_concurrent: int = 3
+
+    _cancel_callback: Optional[Callable[[], bool]] = field(default=None, repr=False)
+    _cancelled: bool = field(default=False, init=False, repr=False)
+
+    def __post_init__(self):
+        """Validate inputs on instantiation."""
+        self.codec = self.codec.lower()
         self.is_audio = self.codec in AUDIO_CODECS
 
         if shutil.which("ffmpeg") is None:
@@ -58,80 +53,81 @@ class Download:
             raise DownloadError(f"Download path does not exist: {self.download_path}")
 
     def set_cancel_check(self, callback: Callable[[], bool]) -> None:
+        """Set a callback that returns True if download should be cancelled."""
         self._cancel_callback = callback
 
     def cancel(self) -> None:
-        with self._lock:
+        """Mark the download as cancelled."""
+        self._cancelled = True
+
+    def _check_cancelled(self) -> bool:
+        """Check if download has been cancelled via callback or flag."""
+        if self._cancelled:
+            return True
+        if self._cancel_callback and self._cancel_callback():
             self._cancelled = True
+            return True
+        return False
 
     def _get_opts(self) -> dict:
-        if self.is_audio:
-            opts = {
-                "quiet": True,
-                "no_warnings": True,
-                "nooverwrites": True,
-                "format": "bestaudio/best",
-                "outtmpl": str(Path(self.download_path) / "%(title)s.%(ext)s"),
-                "concurrent_fragment_downloads": self.max_concurrent,
-                "postprocessors": [
-                    {
-                        "key": "FFmpegExtractAudio",
-                        "preferredcodec": self.codec,
-                        "preferredquality": str(self.kbps),
-                    },
-                    {"key": "FFmpegMetadata"},
-                    {"key": "EmbedThumbnail"},
-                ],
-            }
-            if self.codec == "wav":
-                opts["postprocessors"] = [
-                    p
-                    for p in opts["postprocessors"]
-                    if p["key"] not in ["FFmpegMetadata", "EmbedThumbnail"]
-                ]
-            if self.codec in ["m4a", "aac"]:
-                opts["format"] = "bestaudio[ext=m4a]/bestaudio[ext=aac]/bestaudio/best"
-                opts["postprocessors"] = [
-                    p
-                    for p in opts["postprocessors"]
-                    if p["key"] != "FFmpegExtractAudio"
-                ]
-            return opts
-
-        format_str = "bestvideo+bestaudio/best"
-        if self.codec in ["mp4", "mov"]:
-            format_str = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio/bestvideo+bestaudio/best"
-        elif self.codec in ["mkv", "webm"]:
-            format_str = "bestvideo[ext=webm]+bestaudio[ext=webm]/bestvideo[ext=webm]+bestaudio/bestvideo+bestaudio/best"
-
-        return {
+        """Build yt-dlp options dict based on codec type (audio or video)."""
+        base_opts = {
             "quiet": True,
             "no_warnings": True,
             "nooverwrites": True,
-            "format": format_str,
             "outtmpl": str(Path(self.download_path) / "%(title)s.%(ext)s"),
             "concurrent_fragment_downloads": self.max_concurrent,
-            "merge_output_format": self.codec,
         }
 
-    def download(self) -> bool:
-        self._cancelled = False
+        if self.is_audio:
+            base_opts["format"] = "bestaudio/best"
+            base_opts["postprocessors"] = [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": self.codec,
+                    "preferredquality": str(self.kbps),
+                },
+                {"key": "FFmpegMetadata"},
+                {"key": "EmbedThumbnail"},
+            ]
+
+            if self.codec == "wav":
+                base_opts["postprocessors"] = [
+                    p
+                    for p in base_opts["postprocessors"]
+                    if p["key"] not in ["FFmpegMetadata", "EmbedThumbnail"]
+                ]
+            elif self.codec in {"m4a", "aac"}:
+                base_opts["format"] = (
+                    "bestaudio[ext=m4a]/bestaudio[ext=aac]/bestaudio/best"
+                )
+                base_opts["postprocessors"] = [
+                    p
+                    for p in base_opts["postprocessors"]
+                    if p["key"] != "FFmpegExtractAudio"
+                ]
+        else:
+            audio_ext = VIDEO_CONTAINER_AUDIO_MAP.get(self.codec, "m4a")
+            format_str = (
+                f"bestvideo[ext=mp4]+bestaudio[ext={audio_ext}]/bestvideo+bestaudio/best"
+                if self.codec == "mp4"
+                else f"bestvideo+bestaudio[ext={audio_ext}]/bestvideo+bestaudio/best"
+            )
+            base_opts.update(format=format_str, merge_output_format=self.codec)
+
+        return base_opts
+
+    def download(self) -> None:
+        """Download a single URL synchronously. Raises DownloadError or DownloadCancelledError."""
+        if self._check_cancelled():
+            raise DownloadCancelledError("Download was cancelled before starting")
+
         try:
+            from yt_dlp import YoutubeDL
+
             with YoutubeDL(self._get_opts()) as ydl:
                 ydl.download([self.url])
-            return True
-        except DownloadCancelledError:
-            raise
         except Exception as e:
-            if self._cancelled or (self._cancel_callback and self._cancel_callback()):
-                raise DownloadCancelledError("Download cancelled")
-            raise DownloadError(f"Download failed: {str(e)}")
-
-    async def download_async(self) -> bool:
-        return await asyncio.get_event_loop().run_in_executor(
-            self._executor, self.download
-        )
-
-    def __del__(self):
-        if hasattr(self, "_executor"):
-            self._executor.shutdown(wait=False, cancel_futures=True)
+            if self._cancelled:
+                raise DownloadCancelledError("Download was cancelled") from e
+            raise DownloadError(f"Download failed: {e}") from e
