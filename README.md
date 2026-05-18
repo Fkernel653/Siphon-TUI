@@ -86,7 +86,7 @@ Siphon/
 ├── README.md           # Project documentation
 ├── screenshot.png      # Application screenshot
 └── modules/
-    ├── download.py     # Async download logic with progress tracking
+    ├── download.py     # Download logic with progress tracking
     ├── configer.py     # Configuration management (read/write settings)
     └── colors.py       # Terminal color definitions
 ```
