@@ -1,11 +1,64 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "Siphon"
-version = "1.6.0"
-description = "Siphon is a TUI audio/video downloader based on yt-dlp"
+name = "Siphon-TUI"
+version = "2.1.0"
+description = "Siphon-TUI is a TUI audio/video downloader based on yt-dlp"
 readme = "README.md"
 requires-python = ">=3.10"
+keywords = [
+    "yt-dlp",
+    "downloader",
+    "tui",
+    "terminal",
+    "textual",
+    "video",
+    "audio",
+    "youtube",
+    "cli",
+    "multimedia",
+]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Terminals",
+    "Topic :: Utilities",
+]
 dependencies = [
     "yt-dlp",
     "textual",
-    "mutagen"
+    "mutagen",
+    "color-kiss",
+    "cliss",
+    "platformdirs",
 ]
+
+[project.optional-dependencies]
+dev = ["ruff"]
+
+[project.urls]
+Homepage = "https://github.com/Fkernel653/Siphon-TUI"
+Repository = "https://github.com/Fkernel653/Siphon-TUI.git"
+Documentation = "https://github.com/Fkernel653/Siphon-TUI#readme"
+
+[project.scripts]
+siphon-tui = "siphon_tui.main:main"
+
+[tool.setuptools.packages.find]
+include = ["siphon_tui*"]
+
+[tool.setuptools.package-data]
+siphon_tui = ["*.tcss", "*.json"]

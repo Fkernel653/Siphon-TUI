@@ -1,23 +1,25 @@
-# Siphon is a TUI audio/video downloader based on yt-dlp
+# Siphon-TUI — Download audio/video from YouTube, SoundCloud, and 1000+ sites via interactive terminal UI
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
+[![PyPI](https://img.shields.io/pypi/v/siphon-tui.svg)](https://pypi.org/project/siphon-tui/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-lightgrey)]()
 [![TUI](https://img.shields.io/badge/TUI-textual-purple.svg)](https://github.com/Textualize/textual)
 [![Ruff](https://img.shields.io/badge/code%20style-ruff-261230?logo=ruff&logoColor=white)](https://docs.astral.sh/ruff/)
 
-A modern terminal-based media downloader with interactive UI, built with Python and Textual. Download high-quality audio and video from YouTube, SoundCloud, and [1000+ other platforms](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) with automatic metadata embedding and thumbnail support. Powered by yt-dlp.
+Download and tag high-quality music and video from YouTube, YouTube Music, SoundCloud, and 1000+ sites — all from an interactive terminal UI.
 
 ![Screenshot](screenshot.png)
 
 ## ✨ Features
 
 - **Interactive TUI** — Dropdown selectors, real-time notifications, cancel support
-- **Audio Formats** — MP3, AAC, FLAC, M4A, Opus, Vorbis, WAV with configurable bitrate (64–320 kbps)
-- **Video Formats** — MP4, MKV, WebM, MOV, AVI, FLV with automatic audio codec selection
+- **1000+ Supported Sites** — Any site yt-dlp supports
+- **Audio/Video Formats** — MP3, AAC, FLAC, M4A, Opus, Vorbis, WAV, MP4, MKV, WebM, and more with configurable bitrate (64–320 kbps)
 - **Smart Codec Mapping** — Automatically pairs containers with optimal audio codecs (e.g., MP4→AAC, MKV→Opus)
 - **Metadata Embedding** — Title, artist, album tags + cover art thumbnails
 - **Thread-safe** — Responsive UI during downloads with background processing
+- **Cross-platform Config** — XDG-compliant (Linux), Application Support (macOS), AppData (Windows)
 
 ## 🚀 Quick Start
 
@@ -25,101 +27,123 @@ A modern terminal-based media downloader with interactive UI, built with Python 
 - Python 3.10+ & FFmpeg
 
 ### Installation
-
-#### 1. Clone Repository
-
 ```bash
-git clone https://github.com/Fkernel653/Siphon.git && cd Siphon
-```
-
-#### 2. Install Dependencies
-
-**uv** (recommended)
-```bash
-uv sync
-```
-
-**pip**
-```bash
-pip install .
-```
-
-**Poetry**
-```bash
-poetry install
-```
-
-**PDM**
-```bash
-pdm install
+pip install siphon-tui         # pip
+uv pip install siphon-tui      # uv
+pipx install siphon-tui        # pipx
 ```
 
 ### Usage
 ```bash
-# Set download directory (optional, defaults to home directory)
-python add_path.py
-
-# Launch TUI
-python main.py
+siphon-tui config ~/Downloads    # Set download directory (optional)
+siphon-tui                       # Launch TUI (no arguments)
 ```
 
-If you skip `add_path.py`, files will be saved to your home directory (`~` or `$HOME`).
+If you skip `config`, files will be saved to `~/Downloads` (or platform equivalent).
 
 ## ⌨️ Controls
 
 | Key | Action |
 |-----|--------|
 | `Tab` | Navigate between fields |
+| `↑`/`↓` | Navigate dropdown options |
 | `Enter` | Confirm selection / Start download |
 | `Esc` | Close dropdown |
 | `Ctrl+C` | Exit application |
 
-## 📁 Structure
+## 📋 Interface Elements
 
+### Input Fields
+| Field | Description |
+|-------|-------------|
+| **URL Input** | Paste video/audio URL from any supported platform |
+| **Audio Codec** | Select audio format: MP3, AAC, FLAC, M4A, Opus, Vorbis, WAV |
+| **Container** | Optional video container: MP4, MKV, WebM, MOV, AVI, FLV |
+| **Bitrate** | Audio quality: 64, 128, 256, 320 kbps |
+
+### Buttons
+| Button | Action |
+|--------|--------|
+| **Download** | Start download with selected settings |
+| **Cancel** | Cancel ongoing download |
+
+### Smart Codec Mapping
+When a video container is selected, the optimal audio codec is automatically set:
+
+| Container | Auto Audio Codec |
+|-----------|:----------------:|
+| MP4, MOV | AAC |
+| MKV, WebM | Opus |
+| AVI | MP3 |
+| FLV | AAC |
+
+## 📖 Examples
+
+```bash
+# Audio download
+siphon-tui
+# → Paste URL → Select "mp3" → Select "320" kbps → Press Download
+
+# Video download
+siphon-tui
+# → Paste URL → Select Container "mp4" → Bitrate auto-sets → Press Download
+
+# Cancel download
+# Press "Cancel" button during active download
 ```
-Siphon/
-├── main.py             # TUI entry point and UI logic
-├── add_path.py         # Path configuration tool (optional)
-├── style.tcss          # Layout and spacing styles
-├── config.json         # User settings (download path)
-├── pyproject.toml      # Project metadata and dependencies
-├── README.md           # Project documentation
-├── screenshot.png      # Application screenshot
-└── modules/
-    ├── download.py     # Download logic with progress tracking
-    ├── configer.py     # Configuration management (read/write settings)
-    └── colors.py       # Terminal color definitions
+
+## 📁 Project Structure
 ```
-
-## 🔧 Requirements
-
-| Package | Purpose |
-|---------|---------|
-| `textual` | TUI framework for interactive terminal apps |
-| `yt-dlp` | Media extraction from 1000+ platforms |
-| `mutagen` | Audio metadata tagging and cover art embedding |
-| `FFmpeg` | Audio/video conversion and post-processing |
+siphon_tui/
+├── __init__.py
+├── main.py              # Entry point & CLI/TUI routing
+├── cli.py               # CLI interface (cliss)
+├── tui/
+│   ├── app.py           # Textual TUI application
+│   └── style.tcss       # TUI theme & layout
+└── utils/
+    ├── configer.py      # JSON config manager
+    └── download.py      # Download engine (yt-dlp + mutagen)
+```
 
 ## ⚙️ Configuration
 
-The download path is stored in `config.json` and can be set via:
+The download path is stored in a JSON config file and can be set via CLI:
 
 ```bash
-python add_path.py
+siphon-tui config ~/Music       # Set directory
+siphon-tui config                # View current path (if implemented)
 ```
 
-If no custom path is configured, downloads will be saved to your home directory by default.
+Config locations (auto-managed):
+- **Linux:** `~/.config/siphon-tui/config.json`
+- **macOS:** `~/Library/Application Support/siphon-tui/config.json`
+- **Windows:** `%APPDATA%\siphon-tui\config.json`
+
+## 🔧 Requirements
+
+| Dependency | Purpose |
+|------------|---------|
+| `textual` | TUI framework for interactive terminal apps |
+| `yt-dlp` | Media extraction from 1000+ platforms |
+| `mutagen` | Audio metadata tagging and cover art embedding |
+| `platformdirs` | Cross-platform config paths |
+| `color-kiss` | Terminal colors |
+| `cliss` | CLI framework |
+| **FFmpeg** | Audio/video conversion (system) |
 
 ## 📄 License
 
-MIT License — see [LICENSE](LICENSE).
+MIT License — see [LICENSE](LICENSE) file.
 
 ## 🙏 Acknowledgments
 
 - [Textual](https://github.com/Textualize/textual) – Modern TUI framework
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) – Feature-rich media downloader
-- [mutagen](https://github.com/quodlibet/mutagen) – Python multimedia tagging library
-- [FFmpeg](https://ffmpeg.org) – Complete multimedia solution
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) – Download engine
+- [mutagen](https://github.com/quodlibet/mutagen) – Metadata tagging
+- [platformdirs](https://github.com/platformdirs/platformdirs) – Config paths
+- [color-kiss](https://github.com/Fkernel653/color-kiss) – Terminal colors
+- [cliss](https://github.com/Fkernel653/cliss) – CLI framework
 
 ## ⚠️ Disclaimer
 
@@ -127,5 +151,6 @@ MIT License — see [LICENSE](LICENSE).
 
 ---
 
-**Author:** [Fkernel653](https://github.com/Fkernel653)  
-**Repository:** [github.com/Fkernel653/Siphon](https://github.com/Fkernel653/Siphon)
+**Author:** [Fkernel653](https://github.com/Fkernel653)
+**Repository:** [github.com/Fkernel653/Siphon-TUI](https://github.com/Fkernel653/Siphon-TUI)
+**PyPI:** [pypi.org/project/siphon-tui](https://pypi.org/project/siphon-tui/)
