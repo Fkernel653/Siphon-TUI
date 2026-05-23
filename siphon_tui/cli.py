@@ -1,5 +1,8 @@
 def run_cli():
+    import sys
+
     from cliss import CLI
+    from color_kiss.utils import error
 
     from .tui.app import get_version
 
@@ -11,8 +14,22 @@ def run_cli():
 
     @app.command()
     def config(path: str):
-        from .utils.configer import set_path
+        """Configure the application settings path.
 
-        print(set_path(path))
+        Sets the configuration directory path for storing application
+        settings and data files.
+
+        Args:
+            path: Directory path where configuration files will be stored.
+
+        Raises:
+            SystemExit: If configuration operation fails.
+        """
+        try:
+            from .utils.configer import set_path
+
+            print(set_path(path))
+        except Exception as e:
+            sys.exit(error(str(e)))
 
     app.run()
