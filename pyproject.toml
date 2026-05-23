@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Siphon-TUI"
-version = "2.1.0"
+version = "2.1.1"
 description = "Siphon-TUI is a TUI audio/video downloader based on yt-dlp"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -61,4 +61,4 @@ siphon-tui = "siphon_tui.main:main"
 include = ["siphon_tui*"]
 
 [tool.setuptools.package-data]
-siphon_tui = ["*.tcss", "*.json"]
+siphon_tui = ["tui/*.tcss", "*.json"]
