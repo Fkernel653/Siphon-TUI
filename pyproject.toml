@@ -62,7 +62,4 @@ Documentation = "https://github.com/Fkernel653/Siphon-TUI#readme"
 siphon-tui = "siphon_tui.__main__:main"
 
 [tool.hatch.build.targets.wheel]
-include = ["siphon_tui*"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"siphon_tui/tui" = "siphon_tui/tui/*.tcss"
+packages = ["siphon_tui"]
