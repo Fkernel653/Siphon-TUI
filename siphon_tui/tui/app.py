@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
+from functools import lru_cache
 from threading import Event
 
 from textual import on
@@ -28,6 +29,7 @@ SELECT_IDS = {
 }
 
 
+@lru_cache(maxsize=1)
 def get_version() -> str:
     """Get version from installed package metadata."""
     try:
