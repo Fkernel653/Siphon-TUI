@@ -1,12 +1,17 @@
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
 [project]
 name = "Siphon-TUI"
 version = "2.1.6"
 description = "Siphon-TUI is a TUI audio/video downloader based on yt-dlp"
 readme = "README.md"
 requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    {name = "Fkernel653"}
+]
 keywords = [
     "yt-dlp",
     "downloader",
@@ -54,10 +59,10 @@ Repository = "https://github.com/Fkernel653/Siphon-TUI.git"
 Documentation = "https://github.com/Fkernel653/Siphon-TUI#readme"
 
 [project.scripts]
-siphon-tui = "siphon_tui.main:main"
+siphon-tui = "siphon_tui.__main__:main"
 
 [tool.hatch.build.targets.wheel]
 include = ["siphon_tui*"]
 
 [tool.hatch.build.targets.wheel.force-include]
-siphon_tui = ["tui/*.tcss", "*.json"]
+"siphon_tui/tui" = "siphon_tui/tui/*.tcss"

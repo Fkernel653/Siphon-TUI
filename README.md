@@ -96,7 +96,7 @@ siphon-tui
 ```
 siphon_tui/
 ├── __init__.py
-├── main.py              # Entry point & CLI/TUI routing
+├── __main__.py          # Entry point & CLI/TUI routing
 ├── cli.py               # CLI interface (cliss)
 ├── tui/
 │   ├── app.py           # Textual TUI application
