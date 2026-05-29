@@ -96,7 +96,7 @@ siphon-tui
 siphon_tui/
 ├── __init__.py
 ├── __main__.py          # Entry point & CLI/TUI routing
-├── cli.py               # CLI interface (cliss)
+├── cli.py               # CLI interface (arg-kiss)
 ├── tui/
 │   ├── app.py           # Textual TUI application
 │   └── style.tcss       # TUI theme & layout
@@ -128,7 +128,7 @@ Config locations (auto-managed):
 | `mutagen` | Audio metadata tagging and cover art embedding |
 | `platformdirs` | Cross-platform config paths |
 | `color-kiss` | Terminal colors |
-| `cliss` | CLI framework |
+| `arg-kiss` | CLI framework |
 | **FFmpeg** | Audio/video conversion (system) |
 
 ## 📄 License
@@ -142,7 +142,7 @@ MIT License — see [LICENSE](LICENSE) file.
 - [mutagen](https://github.com/quodlibet/mutagen) – Metadata tagging
 - [platformdirs](https://github.com/platformdirs/platformdirs) – Config paths
 - [color-kiss](https://github.com/Fkernel653/color-kiss) – Terminal colors
-- [cliss](https://github.com/Fkernel653/cliss) – CLI framework
+- [arg-kiss](https://github.com/Fkernel653/arg-kiss) – CLI framework
 
 ## ⚠️ Disclaimer
 

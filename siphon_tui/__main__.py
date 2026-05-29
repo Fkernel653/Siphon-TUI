@@ -2,8 +2,8 @@
 
 import sys
 
-from color_kiss import GREEN, RESET
-from color_kiss.utils import error
+from color_kiss import GREEN
+from color_kiss.utils import error, styled
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
 
             run_cli()
     except KeyboardInterrupt:
-        print(f"\n{GREEN}Goodbye!{RESET}")
+        print(styled("\nGoodbye!", GREEN))
         sys.exit(0)
     except Exception as e:
         sys.exit(error(str(e)))

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "Siphon-TUI"
-version = "3.0.0"
+version = "4.0.0"
 description = "Siphon-TUI is a TUI audio/video downloader based on yt-dlp"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -46,7 +46,7 @@ dependencies = [
     "textual",
     "mutagen",
     "color-kiss",
-    "cliss",
+    "arg-kiss",
     "platformdirs",
 ]
 

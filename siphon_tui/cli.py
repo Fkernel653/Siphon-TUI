@@ -1,7 +1,7 @@
 def run_cli():
     import sys
 
-    from cliss import CLI
+    from arg_kiss import CLI
     from color_kiss.utils import error
 
     from .tui.app import get_version
