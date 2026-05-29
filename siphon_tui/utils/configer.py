@@ -5,39 +5,11 @@ from pathlib import Path
 from color_kiss.utils import error, success
 from platformdirs import user_config_dir
 
-# Cross-platform paths:
-# Windows: %APPDATA%/Siphon/
-# macOS:   ~/Library/Application Support/Siphon/
-# Linux:   ~/.config/Siphon/
 CONFIG_DIR = Path(user_config_dir("Siphon"))
 CONFIG_FILE = CONFIG_DIR / "config.json"
 HOME_PATH = str(Path.home())
 
 KEY_NAME = "path"
-
-
-def _ensure_config_dir() -> None:
-    """Create config directory if it doesn't exist."""
-    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def _load_config() -> dict:
-    """Load config file or return empty dict if not exists."""
-    if not CONFIG_FILE.exists():
-        return {}
-
-    try:
-        return json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, FileNotFoundError):
-        error("Config file is corrupted. Creating new one...")
-        return {}
-
-
-def _save_config(data: dict) -> None:
-    """Save config data to file."""
-    _ensure_config_dir()
-    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
 
 
 def set_path(path: str) -> str:
@@ -53,7 +25,7 @@ def set_path(path: str) -> str:
 
         path_str = str(input_path)
 
-        _ensure_config_dir()
+        CONFIG_DIR.mkdir(parents=True, exist_ok=True)
         with open(CONFIG_FILE, "w", encoding="utf-8") as f:
             json.dump({KEY_NAME: path_str}, f, ensure_ascii=False, indent=4)
 

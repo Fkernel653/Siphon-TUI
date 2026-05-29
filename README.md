@@ -1,7 +1,6 @@
 # Siphon-TUI — Download audio/video from YouTube, SoundCloud, and 1000+ sites via interactive terminal UI
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
-[![PyPI](https://img.shields.io/pypi/v/siphon-tui.svg)](https://pypi.org/project/siphon-tui/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-lightgrey)]()
 [![TUI](https://img.shields.io/badge/TUI-textual-purple.svg)](https://github.com/Textualize/textual)
@@ -28,9 +27,9 @@ Download and tag high-quality music and video from YouTube, YouTube Music, Sound
 
 ### Installation
 ```bash
-pip install siphon-tui         # pip
-uv pip install siphon-tui      # uv
-pipx install siphon-tui        # pipx
+git clone https://github.com/Fkernel653/Siphon-TUI
+cd Siphon-TUI
+pip install .
 ```
 
 ### Usage
@@ -153,4 +152,3 @@ MIT License — see [LICENSE](LICENSE) file.
 
 **Author:** [Fkernel653](https://github.com/Fkernel653)
 **Repository:** [github.com/Fkernel653/Siphon-TUI](https://github.com/Fkernel653/Siphon-TUI)
-**PyPI:** [pypi.org/project/siphon-tui](https://pypi.org/project/siphon-tui/)

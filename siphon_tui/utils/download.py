@@ -5,7 +5,7 @@ Sync YouTube downloader with cancellation support for Rhythmer TUI.
 import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 AUDIO_CODECS = frozenset({"mp3", "aac", "flac", "m4a", "opus", "vorbis", "wav"})
 
@@ -69,7 +69,7 @@ class Download:
             return True
         return False
 
-    def _get_opts(self) -> dict:
+    def _get_opts(self) -> dict[str, Any]:  # type: ignore[explicit-any]
         """Build yt-dlp options dict based on codec type (audio or video)."""
         base_opts = {
             "quiet": True,
@@ -125,7 +125,7 @@ class Download:
         try:
             from yt_dlp import YoutubeDL
 
-            with YoutubeDL(self._get_opts()) as ydl:
+            with YoutubeDL(self._get_opts()) as ydl:  # type: ignore[explicit-any]
                 ydl.download([self.url])
         except Exception as e:
             if self._cancelled:
