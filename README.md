@@ -1,46 +1,39 @@
 # Siphon-TUI — Download audio/video from YouTube, SoundCloud, and 1000+ sites via interactive terminal UI
 
-[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
+[![Status: Archived](https://img.shields.io/badge/Status-Archived-red.svg)](https://github.com/Fkernel653/Siphon-TUI)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macOS%20%7C%20windows-lightgrey)]()
-[![TUI](https://img.shields.io/badge/TUI-textual-purple.svg)](https://github.com/Textualize/textual)
-[![Ruff](https://img.shields.io/badge/code%20style-ruff-261230?logo=ruff&logoColor=white)](https://docs.astral.sh/ruff/)
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
 
-Download and tag high-quality music and video from YouTube, YouTube Music, SoundCloud, and 1000+ sites — all from an interactive terminal UI.
+> ## 🚨 PROJECT ARCHIVED
+>
+> **This project is no longer maintained.**
+>
+> - ✅ Code is left here for historical/portfolio purposes
+> - ❌ No issues or pull requests will be accepted
+> - ❌ No updates or bug fixes — including yt-dlp compatibility fixes
+> - ⚠️ Use at your own risk
 
-![Screenshot](screenshot.png)
+## What this project was
 
-## ✨ Features
+An interactive terminal UI (TUI) for downloading audio and video from YouTube, SoundCloud, and 1000+ sites using yt-dlp, with metadata embedding and format selection.
 
-- **Interactive TUI** — Dropdown selectors, real-time notifications, cancel support
-- **1000+ Supported Sites** — Any site yt-dlp supports
-- **Audio/Video Formats** — MP3, AAC, FLAC, M4A, Opus, Vorbis, WAV, MP4, MKV, WebM, and more with configurable bitrate (64–320 kbps)
-- **Smart Codec Mapping** — Automatically pairs containers with optimal audio codecs (e.g., MP4→AAC, MKV→Opus)
-- **Metadata Embedding** — Title, artist, album tags + cover art thumbnails
-- **Thread-safe** — Responsive UI during downloads with background processing
-- **Cross-platform Config** — XDG-compliant (Linux), Application Support (macOS), AppData (Windows)
+**Features:**
+- Interactive TUI with dropdown selectors and real-time notifications
+- 1000+ supported sites (anything yt-dlp supports)
+- Audio formats: MP3, AAC, FLAC, M4A, Opus, Vorbis, WAV
+- Video containers: MP4, MKV, WebM, MOV, AVI, FLV
+- Configurable bitrate (64–320 kbps)
+- Smart codec mapping (MP4→AAC, MKV→Opus, etc.)
+- Metadata embedding (title, artist, album, cover art)
+- Cross-platform config support
 
-## 🚀 Quick Start
+## Requirements (historical)
 
-### Prerequisites
-- Python 3.10+ & FFmpeg
+- Python 3.10+
+- FFmpeg (system dependency)
+- `textual`, `yt-dlp`, `mutagen`, `platformdirs`, `color-kiss`, `arg-kiss`
 
-### Installation
-```bash
-git clone https://github.com/Fkernel653/Siphon-TUI
-cd Siphon-TUI
-pip install .
-```
-
-### Usage
-```bash
-siphon-tui config ~/Downloads    # Set download directory (optional)
-siphon-tui                       # Launch TUI (no arguments)
-```
-
-If you skip `config`, files will be saved to `~/Downloads` (or platform equivalent).
-
-## ⌨️ Controls
+## Keyboard Shortcuts (for reference)
 
 | Key | Action |
 |-----|--------|
@@ -50,103 +43,13 @@ If you skip `config`, files will be saved to `~/Downloads` (or platform equivale
 | `Esc` | Close dropdown |
 | `Ctrl+C` | Exit application |
 
-## 📋 Interface Elements
-
-### Input Fields
-| Field | Description |
-|-------|-------------|
-| **URL Input** | Paste video/audio URL from any supported platform |
-| **Audio Codec** | Select audio format: MP3, AAC, FLAC, M4A, Opus, Vorbis, WAV |
-| **Container** | Optional video container: MP4, MKV, WebM, MOV, AVI, FLV |
-| **Bitrate** | Audio quality: 64, 128, 256, 320 kbps |
-
-### Buttons
-| Button | Action |
-|--------|--------|
-| **Download** | Start download with selected settings |
-| **Cancel** | Cancel ongoing download |
-
-### Smart Codec Mapping
-When a video container is selected, the optimal audio codec is automatically set:
-
-| Container | Auto Audio Codec |
-|-----------|:----------------:|
-| MP4, MOV | AAC |
-| MKV, WebM | Opus |
-| AVI | MP3 |
-| FLV | AAC |
-
-## 📖 Examples
-
-```bash
-# Audio download
-siphon-tui
-# → Paste URL → Select "mp3" → Select "320" kbps → Press Download
-
-# Video download
-siphon-tui
-# → Paste URL → Select Container "mp4" → Bitrate auto-sets → Press Download
-
-# Cancel download
-# Press "Cancel" button during active download
-```
-
-## 📁 Project Structure
-```
-siphon_tui/
-├── __init__.py
-├── __main__.py          # Entry point & CLI/TUI routing
-├── cli.py               # CLI interface (arg-kiss)
-├── tui/
-│   ├── app.py           # Textual TUI application
-│   └── style.tcss       # TUI theme & layout
-└── utils/
-    ├── configer.py      # JSON config manager
-    └── download.py      # Download engine (yt-dlp + mutagen)
-```
-
-## ⚙️ Configuration
-
-The download path is stored in a JSON config file and can be set via CLI:
-
-```bash
-siphon-tui config ~/Music       # Set directory
-siphon-tui config                # View current path (if implemented)
-```
-
-Config locations (auto-managed):
-- **Linux:** `~/.config/siphon-tui/config.json`
-- **macOS:** `~/Library/Application Support/siphon-tui/config.json`
-- **Windows:** `%APPDATA%\siphon-tui\config.json`
-
-## 🔧 Requirements
-
-| Dependency | Purpose |
-|------------|---------|
-| `textual` | TUI framework for interactive terminal apps |
-| `yt-dlp` | Media extraction from 1000+ platforms |
-| `mutagen` | Audio metadata tagging and cover art embedding |
-| `platformdirs` | Cross-platform config paths |
-| `color-kiss` | Terminal colors |
-| `arg-kiss` | CLI framework |
-| **FFmpeg** | Audio/video conversion (system) |
-
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) file.
-
-## 🙏 Acknowledgments
-
-- [Textual](https://github.com/Textualize/textual) – Modern TUI framework
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) – Download engine
-- [mutagen](https://github.com/quodlibet/mutagen) – Metadata tagging
-- [platformdirs](https://github.com/platformdirs/platformdirs) – Config paths
-- [color-kiss](https://github.com/Fkernel653/color-kiss) – Terminal colors
-- [arg-kiss](https://github.com/Fkernel653/arg-kiss) – CLI framework
-
 ## ⚠️ Disclaimer
 
 **For educational purposes only.** Users are responsible for complying with platform Terms of Service and applicable copyright laws. Download only content you have permission to download.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
 
 ---
 
